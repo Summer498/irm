@@ -2,10 +2,10 @@
   "name": "irm",
   "version": "1.0.0",
   "description": "",
-  "main": "hello.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "trial": "tsc && node ./hello.js"
+    "trial": "tsc && node ./index.js"
   },
   "author": "",
   "license": "ISC",
