@@ -1,0 +1,15 @@
+{
+  "name": "irm",
+  "version": "1.0.0",
+  "description": "",
+  "main": "hello.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "trial": "tsc && node ./hello.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "workspace": "file:../tonal"
+  }
+}
