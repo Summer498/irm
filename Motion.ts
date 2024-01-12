@@ -1,13 +1,21 @@
-class _Motion {
+class _Direction {
   name: string;
   constructor(name: string) {
     this.name = name;
   }
 }
 
-export type Motion = _Motion
-export const mL_AA = new _Motion("mL/AA");  // motion left and similar
-export const mL_AB = new _Motion("mL/AB");  // motion left and different
-export const mR_AA = new _Motion("mR/AA");  // motion right and similar
-export const mR_AB = new _Motion("mR/AB");  // motion right and different
-export const mN_AA = new _Motion("mN/AA");  // motion nil and similar
+class _Pattern {
+  name: string;
+  constructor(name: string) {
+    this.name = name;
+  }
+}
+
+export type Direction = _Direction;
+export type Pattern = _Pattern;
+export const mL = new _Direction("mL");  // motion left (toward closure)
+export const mN = new _Direction("mN");  // motion nil (no motion)
+export const mR = new _Direction("mR");  // motion right (toward non-closure)
+export const AA = new _Pattern("AA");  // similar
+export const AB = new _Pattern("AB");  // different
