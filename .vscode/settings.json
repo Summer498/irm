@@ -4,5 +4,7 @@
     "iptn",
     "vdir",
     "vptn"
-  ]
+  ],
+  "tslint.configFile": "./tslint.json",
+  "tslint.packageManager": "yarn"
 }

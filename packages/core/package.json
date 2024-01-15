@@ -1,0 +1,26 @@
+{
+  "name": "@irm/core",
+  "version": "0.0.0",
+  "description": "Implication-Realization Model Library",
+  "keywords": [
+    "music",
+    "theory"
+  ],
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "files": [
+    "dist"
+  ],
+  "types": "dist/index.d.ts",
+  "author": "Summer498<subore02@gmail.com>",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsup index.ts --sourcemap --dts --format esm,cjs"
+  },
+  "dependencies": {
+    "tonal": "file:../../../tonal"
+  }
+}
