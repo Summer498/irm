@@ -19,8 +19,13 @@ const octave = [
 ]
 
 type NoteLiteral = string;  // TODO: import form tonal / define by myself
-type IntervalLiteral = string;  // TODO: import from tonal / define by myself
+// type IntervalLiteral = string;  // TODO: import from tonal / define by myself
+// type TNote = ReturnType<typeof Note.get>;
+type TInterval = ReturnType<typeof Interval.get>;
 type ArchetypeSymbol = "P" | "IP" | "VP" | "R" | "IR" | "VR" | "D" | "ID" | "M" | "dyad"
+
+const M3 = Interval.get("M3");
+const m3 = Interval.get("m3");
 
 class ParametricScale {
   intervallic_scale_direction: Direction;
@@ -28,9 +33,9 @@ class ParametricScale {
   registral_scale_direction: Direction;
   registral_pattern: Pattern;
 
-  constructor(prev_interval: IntervalLiteral, post_interval: IntervalLiteral) {
-    const prev = Interval.semitones(prev_interval);
-    const post = Interval.semitones(post_interval);
+  constructor(prev_interval: TInterval, post_interval: TInterval) {
+    const prev = prev_interval.semitones;
+    const post = post_interval.semitones;
     // registral
     if (Math.sign(prev) !== Math.sign(post)) {
       this.registral_scale_direction = mL;
@@ -45,7 +50,7 @@ class ParametricScale {
     }
 
     // interval
-    const THRESHOLD = Interval.semitones((this.registral_pattern === AA) ? "M3" : "m3")
+    const THRESHOLD = ((this.registral_pattern === AA) ? M3 : m3).semitones;
     const interval = post - prev;
     this.intervallic_pattern = (Math.abs(interval) < THRESHOLD) ? AA : AB;
     const scale_direction_map = [mL, mN, mR];
@@ -59,21 +64,21 @@ class ParametricScale {
 class RegistralReturnForm {
   is_null: Boolean;
   notes: NoteLiteral[]
-  return_degree: IntervalLiteral;
+  return_degree: TInterval;
   constructor(notes: NoteLiteral[]) {
     this.is_null = true;
     if (notes.length !== 3) { throw new Error(`Invalid argument length. Required 3 arguments but given was ${notes.length} notes: ${notes}`); }
     this.notes = notes;
-    if (notes[0] === "") {  // null object
-      this.return_degree = "0";
+    if (Note.get(notes[0]) === Note.get("")) {  // null object
+      this.return_degree = Interval.get("");
       return;
     }
-    this.return_degree = Interval.distance(notes[0], notes[2]);
+    this.return_degree = Interval.get(Interval.distance(notes[2], notes[0]));
     const direction1 = Math.sign(Interval.semitones(Interval.distance(notes[0], notes[1])))
     const direction2 = Math.sign(Interval.semitones(Interval.distance(notes[1], notes[2])))
     if (
       direction1 !== direction2
-      && direction1 !== 0  // TODO: 0 のときに registral return と判定されるかどうか確認する
+      && direction1 !== 0  // TODO: 0 のときに registral return と判定されるかどうか本を確認する
       && direction2 !== 0
     ) {
       this.is_null = false;
@@ -89,9 +94,10 @@ class Archetype {
   registral_closure: number;
   registral_return_form: RegistralReturnForm;
   notes: NoteLiteral[];
-  intervals: IntervalLiteral[];
+  intervals: TInterval[];
 
   constructor(notes: string[]) {
+    Interval.get
     this.notes = notes;
     const notes_num = notes.length;
     if (notes_num !== 3) {
@@ -99,16 +105,17 @@ class Archetype {
       this.intervallic_closure = 0;
       this.registral_closure = 0;
       this.registral_return_form = NULL_REGISTRAL_RETURN_FORM;
+      this.intervals = [Interval.get(""), Interval.get("")];
       if (notes_num === 1) this.symbol = "M";
       else if (notes_num === 2) this.symbol = "dyad";
       else throw new Error(`Invalid length of notes. Required 1, 2, or, 3 notes but given was ${notes.length} notes: ${notes}`)
     }
     else {
       this.intervals = [
-        Interval.distance(notes[0], notes[1]),
-        Interval.distance(notes[1], notes[2]),
+        Interval.get(Interval.distance(notes[0], notes[1])),
+        Interval.get(Interval.distance(notes[1], notes[2])),
       ]
-      const parametric_scale = new ParametricScale(Interval.distance(notes[0], notes[1]), Interval.distance(notes[1], notes[2]));
+      const parametric_scale = new ParametricScale(this.intervals[0],this.intervals[1]);
       const idir = parametric_scale.intervallic_scale_direction;
       const iptn = parametric_scale.intervallic_pattern;
       const vdir = parametric_scale.registral_scale_direction;
@@ -116,33 +123,26 @@ class Archetype {
       this.registral_return_form = new RegistralReturnForm(notes);
 
       [
-        ['IR',  'P',  'P',  'P', 'VP',],
-        ['--', '--',  'D', '--', '--',],
-        [ 'R', 'IP', 'ID', 'IP', 'VR',],
+        ['IR', 'P', 'P', 'P', 'VP',],
+        ['--', '--', 'D', '--', '--',],
+        ['R', 'IP', 'ID', 'IP', 'VR',],
       ];
       [
-        [1,0,0,0,0],
-        [0,0,0,0,0],
-        [1,0,0,0,1],
+        [1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [1, 0, 0, 0, 1],
       ];
 
-      // Process
-      if (parametric_scale.registral === mR_AA &&
-        (parametric_scale.interval === mR_AA
-          || parametric_scale.interval === mN_AA
-          || parametric_scale.interval === mL_AA)
-      ) {
-        this.symbol = "P";
-        this.intervallic_realization = true;
-        this.registral_realization = true;
-      } else if (
-        parametric_scale.registral === mR_AA
-        && parametric_scale.interval === mR_AB) {
-        this.symbol = "VP";
-        this.registral_realization = true;
-      } else {
-        throw new Error(`Unconsidered condition: parametric_scale.interval.name=${parametric_scale.interval.name}, parametric_scale.registral.name=${parametric_scale.registral.name}`);
-      }
+      // TODO: retrospective バージョンで closure か否かが変わってくる
+      this.intervallic_closure = idir.closure_degree * iptn.closure_degree;
+      this.registral_closure = vdir.closure_degree;
+      // Reverse
+      const is_reversal = (vdir === mL || idir === mL) && iptn === AB;
+
+      this.retrospective = Math.abs(this.intervals[0].semitones) <= 5  //TODO: この条件であっているかメモを確認する
+
+      if (is_reversal) this.retrospective = !this.retrospective;
+      
     }
   }
 }
