@@ -1,5 +1,5 @@
 import { Interval, Note, NoteLiteral } from "tonal";
-import { TInterval } from "./tonalObjects";
+import { TInterval } from "../TonalWrapper";
 
 export class RegistralReturnForm {
   is_null: boolean;
@@ -9,7 +9,7 @@ export class RegistralReturnForm {
     this.is_null = true;
     if (notes.length !== 3) {
       throw new Error(
-        `Invalid argument length. Required 3 arguments but given was ${notes.length} notes: ${notes}`,
+        `Invalid argument length. Required 3 arguments but given was ${notes.length} notes: ${JSON.stringify(notes)}`,
       );
     }
     this.notes = notes;
