@@ -4,14 +4,14 @@
     "declarationDir": "./dist",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "module": "ES6",
-    "moduleResolution": "Bundler",
+    "module": "ES2022",
+    "target": "ES2022",
+    "moduleResolution": "Node",
     "noImplicitAny": true,
     "outDir": "./dist",
     "skipLibCheck": true,
-    "strict": true,
-    "target": "esnext"
+    "strict": true
   },
-  "include": ["packages/**/*.ts", "../../packages/**/*"],
+  "include": ["packages/**/*.ts"],
   "exclude": ["node_modules", "**/dist/**/*"]
 }

@@ -1,5 +1,5 @@
 {
-  "name": "@irm/core",
+  "name": "@irm/tonal-wrapper",
   "version": "0.0.0",
   "description": "Implication-Realization Model Library",
   "keywords": [
@@ -19,5 +19,8 @@
   },
   "scripts": {
     "build": "tsup index.ts --sourcemap --dts --format esm,cjs"
+  },
+  "dependencies": {
+    "tonal": "file:../../../tonal"
   }
 }
